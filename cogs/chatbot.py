@@ -8,6 +8,8 @@ class ChatBot(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.prompt_file = 'data/chatbot_prompts.json'
+        # Initialize default name before loading prompts
+        self.name = "Discord Bot"  # Default name
         self.load_prompts()
 
     def load_prompts(self):
@@ -19,12 +21,13 @@ class ChatBot(commands.Cog):
                 self.responses = data.get('responses', self.get_default_responses())
                 self.help_responses = data.get('help_responses', self.get_default_help_responses())
                 self.personality = data.get('personality', "Saya adalah bot Discord yang ramah dan membantu.")
-                self.name = data.get('name', self.bot.user.name)
+                # Only update name if it exists in the file
+                if 'name' in data:
+                    self.name = data['name']
         except FileNotFoundError:
             self.responses = self.get_default_responses()
             self.help_responses = self.get_default_help_responses()
             self.personality = "Saya adalah bot Discord yang ramah dan membantu."
-            self.name = self.bot.user.name
             self.save_prompts()
 
     def save_prompts(self):
@@ -178,7 +181,7 @@ class ChatBot(commands.Cog):
         self.responses = self.get_default_responses()
         self.help_responses = self.get_default_help_responses()
         self.personality = "Saya adalah bot Discord yang ramah dan membantu."
-        self.name = self.bot.user.name
+        self.name = "Discord Bot"
         self.save_prompts()
         await ctx.send("All prompts have been reset to default!")
 
